@@ -2,7 +2,9 @@ from flask import Flask
 from flask_cors import CORS, cross_origin
 from flask import request
 import lstm_model
-from flask import jsonify
+import logging
+from waitress import serve
+
 # Khởi tạo Flask Server Backend
 app = Flask(__name__)
 
@@ -16,7 +18,7 @@ app.config['UPLOAD_FOLDER'] = "static"
 
 
 model = lstm_model.lstm_model("./weights/ckpt_best.hdf5")
-
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(message)s')
 
 @app.route('/', methods=['POST'] )
 def predict_sim_price():
@@ -35,4 +37,5 @@ def predict_sim_price():
 
 # Start Backend
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port='7777')
+    # app.run(host='0.0.0.0', port='7777')
+    serve(app, host='0.0.0.0', port='7777', threads = 1)
