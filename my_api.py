@@ -30,6 +30,7 @@ def predict_sim_price():
         result = {}
         result['career'] = model.predict('career', input)
         result['price_category'] = str(model.predict('price',input))
+        result['features'] = (model.predict('features',input))
         
         return result
 
