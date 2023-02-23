@@ -109,7 +109,9 @@ class lstm_model():
         appr_pos = [m.start() for m in re.finditer(sub_string, input[2:])]
         total_appr_time = len(appr_pos)
         str_len = len(sub_string)
-        if(str_len > max_string_length and total_appr_time >= 2):
+
+        if((str_len > max_string_length and total_appr_time >= 2) 
+           or (str_len == max_string_length and total_appr_time >= 2 and max(appr_pos)>max(max_appr_pos))):
           max_string_length = str_len
           max_total_appr_time = total_appr_time
           max_appr_pos = appr_pos
@@ -136,12 +138,12 @@ class lstm_model():
       god_and_fengshui = {
         "godOfWealth": ["39", "79"],
         "godOfSoil": ["38", "78"],
-        "fortune": ["68", "6688", "666888", "86", "8866", "888666"]
+        "fortune": ["68", "6688", "666888","66668888", "86", "8866", "888666", "88886666"]
       }
       
       for type in god_and_fengshui:
         for tail in god_and_fengshui[type]:
-          if(input[3:].endswith(tail)):
+          if(input[2:].endswith(tail)):
             features[type] = tail
 
       
@@ -198,6 +200,10 @@ class lstm_model():
         for i in range(len(array)-2, 1, -1):
           if int(array[i]) - int(array[i-1]) == delta:
             straight += array[i-1]
+          else:
+            break
       if len(straight) >= 3:
         features["straight"] = straight[::-1]
+      if(is_empty(features)):
+          features["none"] = True 
       return features
