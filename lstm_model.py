@@ -196,7 +196,8 @@ class lstm_model():
           for keys in array_dict:
             if array_dict[keys] == max_time_appr and keys != curr_digit:
               features["nOfAKind"]["kind"].append(keys)
-          
+        if(max_time_appr == 2 and len(features["nOfAKind"]["kind"]) == 1): 
+          del features["nOfAKind"]
       straight = "" 
       delta = int(array[len(array)-1]) - int(array[len(array)-2])
       if(abs(delta) == 1): 
