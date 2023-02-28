@@ -1,12 +1,16 @@
 import numpy as np
 import re
-import json
-
+import datetime
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, LSTM, Dropout
 from tensorflow.keras.optimizers import Adam
 def is_empty(dict):
   return not bool(dict)
+def is_valid_date(day, month, year):
+  max_date = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  if (year % 4==0) and (year % 100 != 0 or year % 400 == 0):
+      max_date[2] = 29
+  return (1 <= month <= 12 and 1 <= day <= max_date[month])
 class lstm_model():
   def __init__(self, weights):
     self.model = Sequential()
@@ -204,6 +208,22 @@ class lstm_model():
             break
       if len(straight) >= 3:
         features["straight"] = straight[::-1]
+      current_year = datetime.date.today().year
+      if(int(input[6:]) in range(1980, current_year + 1)):
+        features["fullBirthYear"] = input[6:]
+      
+      date = input[4:]
+      day, month, year = [int(date[i:i+2]) for i in range(0, len(date), 2)]
+      if(year <= 30):
+        year = 2000 + year
+      else:
+        year = 1900 + year
+      if(is_valid_date(day, month, year)):
+        features["dateOfBirth"] = {
+          'day': day,
+          "month": month,
+          'year': year
+        }
       if(is_empty(features)):
-          features["none"] = True 
+        features["none"] = True 
       return features
